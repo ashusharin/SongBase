@@ -65,16 +65,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkPermission() {
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                PERMISSION_READ) != PackageManager.PERMISSION_GRANTED
         ) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                    PERMISSION_READ)
             ) {
                 ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), MY_PERMISSION_REQUEST)
+                    arrayOf(PERMISSION_READ), MY_PERMISSION_REQUEST)
             } else {
                 ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), MY_PERMISSION_REQUEST)
+                    arrayOf(PERMISSION_READ), MY_PERMISSION_REQUEST)
             }
         } else {
             viewModel.findSongs()
