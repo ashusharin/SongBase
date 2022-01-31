@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/padding8"
+    android:paddingTop="@dimen/Padding4"
+    android:paddingBottom="@dimen/Padding4"
+    android:paddingEnd="@dimen/padding8">
+
+    <TextView
+        android:id="@+id/title_song"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Highway to Hell" />
+
+    <TextView
+        android:id="@+id/artist_song"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:enabled="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="AC/DC" />
+</androidx.appcompat.widget.LinearLayoutCompat>
