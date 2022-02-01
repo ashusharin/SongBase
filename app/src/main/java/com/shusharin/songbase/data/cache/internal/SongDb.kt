@@ -9,15 +9,15 @@ import com.shusharin.songbase.data.ToSongMapper
 @Entity
 data class SongDb(
     @PrimaryKey(autoGenerate = true)
-    val _id: Long = 0,
-    val track_id: Long,
-    val title: String,
-    val artist: String,
-    val size: Int,
-    val bitrate: Int,
-    val duration: Int,
-    val local_path: String,
-    val uri: String,
+    var _id: Long = 0,
+    var track_id: Long,
+    var title: String,
+    var artist: String,
+    var size: Int,
+    var bitrate: Int,
+    var duration: Int,
+    var local_path: String,
+    var uri: String,
 ) : Abstract.Object<SongData, ToSongMapper> {
     override fun map(mapper: ToSongMapper): SongData =
         SongData(_id, track_id, title, artist, size, bitrate, duration, local_path, uri)
