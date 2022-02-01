@@ -80,7 +80,7 @@ interface ExternalCacheDataSource {
         }
 
         private fun calculateBitrate(size: Int, duration: Int): Int {
-            val bitrateApproximate = (size * 8) / (duration / 1000)
+            val bitrateApproximate = (size * BITE_IN_BYTE) / (duration / MILLISECONDS_IN_SECOND)
             var result = 0
             val array = arrayListOf<Int>()
             for (i in BITRATE_VALUE) {
@@ -117,6 +117,11 @@ interface ExternalCacheDataSource {
         const val DATA = MediaStore.Audio.Media.DATA
         const val RELATIVE_PATH = MediaStore.Audio.Media.RELATIVE_PATH
         const val MIME_TYPE = MediaStore.Audio.Media.MIME_TYPE
+
+        const val BITE_IN_BYTE = 8
+        const val MILLISECONDS_IN_SECOND = 1000
+
+
     }
 }
 
