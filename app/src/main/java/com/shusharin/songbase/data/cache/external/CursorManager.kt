@@ -14,14 +14,11 @@ interface CursorManager {
         override fun provideProjection(): Array<String?> {
 
             val pathRequest = providePath()
-            val bitrateRequest: String?
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                bitrateRequest = ExternalCacheDataSource.BITRATE
+            val bitrateRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ExternalCacheDataSource.BITRATE
             } else {
-                bitrateRequest = null
+                null
             }
-
 
             return arrayOf(
                 ExternalCacheDataSource._ID,
