@@ -26,7 +26,7 @@ class SongAdapter(private val retry: Retry) : RecyclerView.Adapter<SongAdapter.S
             private val artistSong = itemView.findViewById<TextView>(R.id.artist_song)
             override fun bind(song: SongUi) {
                 song.map(object : SongUi.StringMapper {
-                    override fun map(
+                    override fun setupText(
                         title: String,
                         artist: String,
                     ) {
@@ -42,7 +42,7 @@ class SongAdapter(private val retry: Retry) : RecyclerView.Adapter<SongAdapter.S
             private val button = itemView.findViewById<Button>(R.id.tryAgainButton)
             override fun bind(song: SongUi) {
                 song.map(object : SongUi.StringMapper {
-                    override fun map(text: String) {
+                    override fun setupText(text: String) {
                         message.text = text
                     }
                 })

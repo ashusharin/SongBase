@@ -11,15 +11,15 @@ sealed class SongUi : Abstract.Object<Unit, SongUi.StringMapper> {
         private val title: String,
         private val artist: String,
     ) : SongUi() {
-        override fun map(mapper: StringMapper) = mapper.map(title, artist)
+        override fun map(mapper: StringMapper) = mapper.setupText(title, artist)
     }
 
     class Fail(private val message: String) : SongUi() {
-        override fun map(mapper: StringMapper) = mapper.map(message)
+        override fun map(mapper: StringMapper) = mapper.setupText(message)
     }
 
     interface StringMapper : Abstract.Mapper {
-        fun map(title: String, artist: String) = Unit
-        fun map(message: String) = Unit
+        fun setupText(title: String, artist: String) = Unit
+        fun setupText(message: String) = Unit
     }
 }
