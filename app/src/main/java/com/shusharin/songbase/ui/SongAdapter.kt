@@ -55,9 +55,12 @@ class SongAdapter(private val retry: Retry) : RecyclerView.Adapter<SongAdapter.S
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder =
         when (viewType) {
-            0 -> SongViewHolder.Base(R.layout.song_layout.makeView(parent))
-            1 -> SongViewHolder.Fail(R.layout.fail_fullscreen.makeView(parent), retry)
-            else -> SongViewHolder.Progress(R.layout.progress_fullscreen.makeView(parent))
+            BASE -> SongViewHolder.Base(LayoutInflater.from(parent.context)
+                .inflate(R.layout.song_layout, parent, false))
+            FAIL -> SongViewHolder.Fail(LayoutInflater.from(parent.context)
+                .inflate(R.layout.fail_fullscreen, parent, false), retry)
+            else -> SongViewHolder.Progress(LayoutInflater.from(parent.context)
+                .inflate(R.layout.progress_fullscreen, parent, false))
         }
 
 
@@ -66,15 +69,18 @@ class SongAdapter(private val retry: Retry) : RecyclerView.Adapter<SongAdapter.S
 
     override fun getItemCount(): Int = songs.size
     override fun getItemViewType(position: Int) = when (songs[position]) {
-        is SongUi.Base -> 0
-        is SongUi.Fail -> 1
-        is SongUi.Progress -> 2
+        is SongUi.Base -> BASE
+        is SongUi.Fail -> FAIL
+        is SongUi.Progress -> PROGRESS
     }
 
     interface Retry {
         fun tryAgain()
     }
-}
 
-private fun Int.makeView(parent: ViewGroup) =
-    LayoutInflater.from(parent.context).inflate(this, parent, false)
+    companion object {
+        private val BASE = 0
+        private val FAIL = 1
+        private val PROGRESS = 2
+    }
+}
