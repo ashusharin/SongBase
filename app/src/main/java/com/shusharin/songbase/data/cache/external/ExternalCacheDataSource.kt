@@ -57,20 +57,33 @@ interface ExternalCacheDataSource {
                         collection, _id)
                     val mimeType = getMimeType(cursor, typeColumn)
 
-                    if (mimeType.toString() in types && duration > 10000) {
-                        musicList.add(SongData(_id = _id,
-                            track_id = trackId,
-                            title = title,
-                            artist = artist,
-                            bitrate = bitrate,
-                            uri = uri.toString(),
-                            size = size,
-                            duration = duration,
-                            local_path = local_path))
+                    if (mimeType.toString() in types && duration > TEN_SECOND) {
+                        val pathSplit = local_path.split("/")
+                        if (isMusic(pathSplit)) {
+                            musicList.add(SongData(_id = _id,
+                                track_id = trackId,
+                                title = title,
+                                artist = artist,
+                                bitrate = bitrate,
+                                uri = uri.toString(),
+                                size = size,
+                                duration = duration,
+                                local_path = local_path))
+                        }
                     }
                 }
             }
             return musicList
+        }
+
+        private fun isMusic(path: List<String>): Boolean {
+            var result = true
+            for (name in path) {
+                if (PATH_NAME.contains(name)) {
+                    result = false
+                }
+            }
+            return result
         }
 
         private fun getMimeType(cursor: Cursor, typeColumn: Int): String? {
@@ -120,7 +133,18 @@ interface ExternalCacheDataSource {
 
         const val BITE_IN_BYTE = 8
         const val MILLISECONDS_IN_SECOND = 1000
+        const val TEN_SECOND = 1000
 
+        val PATH_NAME = arrayOf(
+            "sound_recorder",
+            "voice_recorder",
+            "recordings",
+            "Recordings",
+            "Sounds",
+            "Sound",
+            "Rec",
+            "Soundrecorder",
+        )
 
     }
 }
