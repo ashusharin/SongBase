@@ -24,13 +24,19 @@ interface SongRepository {
                 val songsExternal = externalCacheDataSource.find()
                 var songsInternal = cacheMapper.map(songsDb)
 
-                songsInternal.forEach { songInternal ->
-                    if (!songsExternal.any { songInternal == it }) {
-                        songsExternal.forEach { songExternal ->
-                            if (songInternal.isSame(songExternal)) {
-                                internalCacheDataSource.updateSong(songExternal)
-                            } else {
-                                internalCacheDataSource.deleteSong(songInternal)
+                if (songsExternal.isEmpty()) {
+                    songsInternal.forEach {
+                        internalCacheDataSource.deleteSong(it)
+                    }
+                } else {
+                    songsInternal.forEach { songInternal ->
+                        if (!songsExternal.any { songInternal == it }) {
+                            songsExternal.forEach { songExternal ->
+                                if (songInternal.isSame(songExternal)) {
+                                    internalCacheDataSource.updateSong(songExternal)
+                                } else {
+                                    internalCacheDataSource.deleteSong(songInternal)
+                                }
                             }
                         }
                     }
