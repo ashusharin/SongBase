@@ -19,21 +19,17 @@ class MainViewModel(
 ) {
 
     fun findSongs() {
-        Log.d("данные", "findsongs вызван ")
         communication.map(listOf(SongUi.Progress))
         viewModelScope.launch(Dispatchers.IO) {
             val resultDomain = songsInteractor.findListSong()
-            Log.d("данные", "$resultDomain")
             val resultUi = resultDomain.map(mapper)
             withContext(Dispatchers.Main) {
                 resultUi.map(communication)
             }
         }
-
     }
 
     fun observe(owner: LifecycleOwner, observer: Observer<List<SongUi>>) {
         communication.observe(owner, observer)
     }
-
 }
