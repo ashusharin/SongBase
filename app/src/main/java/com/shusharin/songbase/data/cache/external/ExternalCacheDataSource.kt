@@ -58,8 +58,7 @@ interface ExternalCacheDataSource {
                     val mimeType = getMimeType(cursor, typeColumn)
 
                     if (mimeType.toString() in types && duration > TEN_SECOND) {
-                        val pathSplit = local_path.split("/")
-                        if (isMusic(pathSplit)) {
+                        if (isMusic(local_path)) {
                             musicList.add(SongData(_id = _id,
                                 track_id = trackId,
                                 title = title,
@@ -76,10 +75,10 @@ interface ExternalCacheDataSource {
             return musicList
         }
 
-        private fun isMusic(path: List<String>): Boolean {
+        private fun isMusic(path: String): Boolean {
             var result = true
-            for (name in path) {
-                if (PATH_NAME.contains(name)) {
+            for (name in PATH_NAME) {
+                if (path.contains(name)) {
                     result = false
                 }
             }

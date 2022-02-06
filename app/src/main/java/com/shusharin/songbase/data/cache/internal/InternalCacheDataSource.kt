@@ -12,6 +12,8 @@ interface InternalCacheDataSource {
 
     suspend fun updateSong(song: SongData)
 
+    suspend fun deleteAll()
+
     class Base(private val database: SongDatabase, private val toDbMapper: SongDataToDbMapper) :
         InternalCacheDataSource {
 
@@ -33,5 +35,11 @@ interface InternalCacheDataSource {
         override suspend fun updateSong(song: SongData) {
             database.updateSong(song.mapTo(toDbMapper))
         }
+
+        override suspend fun deleteAll() {
+            database.deleteAll()
+        }
+
+
     }
 }
