@@ -15,8 +15,7 @@ data class SongData(
     private val duration: Int,
     private val local_path: String,
     private val uri: String,
-) : ToSongDb<SongDb, SongDataToDbMapper>, Abstract.Object<SongDomain, SongDataToDomainMapper>,
-    Compare {
+) : ToSongDb<SongDb, SongDataToDbMapper>, Abstract.Object<SongDomain, SongDataToDomainMapper>{
     override fun map(mapper: SongDataToDomainMapper): SongDomain = mapper.map(title, artist)
     override fun mapTo(mapper: SongDataToDbMapper): SongDb = mapper.mapToDb(_id,
         track_id,
@@ -28,7 +27,7 @@ data class SongData(
         local_path,
         uri)
 
-    override fun isSame(song: SongData): Boolean =
+     fun isSame(song: SongData): Boolean =
         (song.local_path == local_path && song.title == title && song.duration != duration)
 }
 
@@ -37,6 +36,3 @@ interface ToSongDb<T, M : Abstract.Mapper> {
     fun mapTo(mapper: M): T
 }
 
-interface Compare {
-    fun isSame(song: SongData): Boolean
-}

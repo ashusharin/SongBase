@@ -29,8 +29,13 @@ class MainActivity : AppCompatActivity() {
         checkPermission()
 
         viewModel.observe(this, {
+            if (it.isEmpty()) showToast(getString(R.string.music_empty))
             adapter.update(it)
         })
+    }
+
+    private fun showToast(text:String) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 
     override fun onRequestPermissionsResult(
