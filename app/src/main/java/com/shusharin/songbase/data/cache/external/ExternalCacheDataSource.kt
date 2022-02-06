@@ -144,6 +144,10 @@ interface ExternalCacheDataSource {
             "Sound",
             "Rec",
             "Soundrecorder",
+            "Call",
+            "VoiceNotes",
+            "Voice",
+            "voice"
         )
 
     }
