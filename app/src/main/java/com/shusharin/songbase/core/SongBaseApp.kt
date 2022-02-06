@@ -20,7 +20,7 @@ class SongBaseApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val content = ResolverWrapper.Base(this)
+        val content = ResolverWrapper(this)
         val appDatabase = Room
             .databaseBuilder(this, AppDatabase::class.java, "Song.db")
             .fallbackToDestructiveMigration()
@@ -28,15 +28,15 @@ class SongBaseApp : Application() {
         val dao = appDatabase.dao()
         val songDatabase = SongDatabase(dao)
         val mapper = Mapper()
-        val cacheDataSource = InternalCacheDataSource.Base(songDatabase, mapper)
-        val cursorManager = CursorManager.Base()
-        val externalCacheDataSource = ExternalCacheDataSource.Base(content, cursorManager)
+        val cacheDataSource = InternalCacheDataSource(songDatabase, mapper)
+        val cursorManager = CursorManager()
+        val externalCacheDataSource = ExternalCacheDataSource(content, cursorManager)
 //        val cacheMapper = SongListCacheMapper.Base(toSongMapper)
-        val resourceProvider = ResourceProvider.Base(this)
+        val resourceProvider = ResourceProvider(this)
         val songRepository =
             SongRepositoryImpl(cacheDataSource, externalCacheDataSource, mapper, resourceProvider)
         val songsInteractor = SongsInteractor.Base(songRepository)
-        val communication = SongListCommunication.Base()
+        val communication = SongListCommunication()
         viewModel = MainViewModel(
             songsInteractor,
             communication,

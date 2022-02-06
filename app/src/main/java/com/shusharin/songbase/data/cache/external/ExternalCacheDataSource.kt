@@ -8,103 +8,103 @@ import android.webkit.MimeTypeMap
 import com.shusharin.songbase.domain.Song
 import kotlin.math.abs
 
-interface ExternalCacheDataSource {
-    fun find(): List<Song>
+class ExternalCacheDataSource(
+    private val resolver: ResolverWrapper,
+    private val cursorManager: CursorManager,
+) {
 
-    class Base(private val resolver: ResolverWrapper, private val cursorManager: CursorManager) :
-        ExternalCacheDataSource {
-        override fun find(): List<Song> {
-            val musicList = mutableListOf<Song>()
-            val collection = cursorManager.provideCollection()
-            val projection = cursorManager.provideProjection()
-            val query = resolver.provideContentResolver().query(
-                collection,
-                projection,
-                SELECTION,
-                null,
-                null
-            )
+    fun find(): List<Song> {
+        val musicList = mutableListOf<Song>()
+        val collection = cursorManager.provideCollection()
+        val projection = cursorManager.provideProjection()
+        val query = resolver.provideContentResolver().query(
+            collection,
+            projection,
+            SELECTION,
+            null,
+            null
+        )
 
-            query?.use { cursor ->
-                val _idColumn = cursor.getColumnIndexOrThrow(_ID)
-                val titleColumn = cursor.getColumnIndexOrThrow(TITLE)
-                val artistColumn = cursor.getColumnIndexOrThrow(ARTIST)
-                val id_track = cursor.getColumnIndexOrThrow(TRACK)
-                val sizeColumn = cursor.getColumnIndexOrThrow(SIZE)
-                val durationColumn =
-                    cursor.getColumnIndexOrThrow(DURATION)
-                val localPathColumn =
-                    cursor.getColumnIndexOrThrow(cursorManager.providePath())
-                val typeColumn =
-                    cursor.getColumnIndexOrThrow(MIME_TYPE)
-                val bitrateColumn =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) cursor.getColumnIndexOrThrow(
-                        BITRATE) else null
+        query?.use { cursor ->
+            val _idColumn = cursor.getColumnIndexOrThrow(_ID)
+            val titleColumn = cursor.getColumnIndexOrThrow(TITLE)
+            val artistColumn = cursor.getColumnIndexOrThrow(ARTIST)
+            val id_track = cursor.getColumnIndexOrThrow(TRACK)
+            val sizeColumn = cursor.getColumnIndexOrThrow(SIZE)
+            val durationColumn =
+                cursor.getColumnIndexOrThrow(DURATION)
+            val localPathColumn =
+                cursor.getColumnIndexOrThrow(cursorManager.providePath())
+            val typeColumn =
+                cursor.getColumnIndexOrThrow(MIME_TYPE)
+            val bitrateColumn =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) cursor.getColumnIndexOrThrow(
+                    BITRATE) else null
 
-                while (cursor.moveToNext()) {
-                    val _id = cursor.getLong(_idColumn)
-                    val trackId = cursor.getLong(id_track)
-                    val title = cursor.getString(titleColumn)
-                    val artist = cursor.getString(artistColumn)
-                    val local_path = cursor.getString(localPathColumn)
-                    val size = cursor.getInt(sizeColumn)
-                    val duration = cursor.getInt(durationColumn)
-                    val bitrate = if (bitrateColumn == null) calculateBitrate(size, duration) else
-                        cursor.getInt(bitrateColumn)
-                    val uri = ContentUris.withAppendedId(
-                        collection, _id)
-                    val mimeType = getMimeType(cursor, typeColumn)
+            while (cursor.moveToNext()) {
+                val _id = cursor.getLong(_idColumn)
+                val trackId = cursor.getLong(id_track)
+                val title = cursor.getString(titleColumn)
+                val artist = cursor.getString(artistColumn)
+                val local_path = cursor.getString(localPathColumn)
+                val size = cursor.getInt(sizeColumn)
+                val duration = cursor.getInt(durationColumn)
+                val bitrate = if (bitrateColumn == null) calculateBitrate(size, duration) else
+                    cursor.getInt(bitrateColumn)
+                val uri = ContentUris.withAppendedId(
+                    collection, _id)
+                val mimeType = getMimeType(cursor, typeColumn)
 
-                    if (mimeType.toString() in types && duration > TEN_SECOND) {
-                        if (isMusic(local_path)) {
-                            musicList.add(Song(_id = _id,
-                                track_id = trackId,
-                                title = title,
-                                artist = artist,
-                                bitrate = bitrate,
-                                uri = uri.toString(),
-                                size = size,
-                                duration = duration,
-                                local_path = local_path))
-                        }
+                if (mimeType.toString() in types && duration > TEN_SECOND) {
+                    if (isMusic(local_path)) {
+                        musicList.add(Song(_id = _id,
+                            track_id = trackId,
+                            title = title,
+                            artist = artist,
+                            bitrate = bitrate,
+                            uri = uri.toString(),
+                            size = size,
+                            duration = duration,
+                            local_path = local_path))
                     }
                 }
             }
-            return musicList
         }
-
-        private fun isMusic(path: String): Boolean {
-            var result = true
-            for (name in PATH_NAME) {
-                if (path.contains(name)) {
-                    result = false
-                }
-            }
-            return result
-        }
-
-        private fun getMimeType(cursor: Cursor, typeColumn: Int): String? {
-            val type = cursor.getString(typeColumn)
-            val mimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(type)
-            return mimeType
-        }
-
-        private fun calculateBitrate(size: Int, duration: Int): Int {
-            val bitrateApproximate = (size * BITE_IN_BYTE) / (duration / MILLISECONDS_IN_SECOND)
-            var result = 0
-            val array = arrayListOf<Int>()
-            for (i in BITRATE_VALUE) {
-                array += abs((i - bitrateApproximate))
-            }
-            val min = array.minOrNull()
-            for (i in array.indices) {
-                if (min == array[i]) {
-                    result = BITRATE_VALUE[i]
-                }
-            }
-            return result
-        }
+        return musicList
     }
+
+    private fun isMusic(path: String): Boolean {
+        var result = true
+        for (name in PATH_NAME) {
+            if (path.contains(name)) {
+                result = false
+            }
+        }
+        return result
+    }
+
+    private fun getMimeType(cursor: Cursor, typeColumn: Int): String? {
+        val type = cursor.getString(typeColumn)
+        val mimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(type)
+        return mimeType
+    }
+
+    private fun calculateBitrate(size: Int, duration: Int): Int {
+        val bitrateApproximate = (size * BITE_IN_BYTE) / (duration / MILLISECONDS_IN_SECOND)
+        var result = 0
+        val array = arrayListOf<Int>()
+        for (i in BITRATE_VALUE) {
+            array += abs((i - bitrateApproximate))
+        }
+        val min = array.minOrNull()
+        for (i in array.indices) {
+            if (min == array[i]) {
+                result = BITRATE_VALUE[i]
+            }
+        }
+        return result
+    }
+
 
     companion object {
         val types = arrayOf("mp4",
@@ -149,5 +149,6 @@ interface ExternalCacheDataSource {
 
     }
 }
+
 
 

@@ -3,10 +3,6 @@ package com.shusharin.songbase.ui
 import android.content.Context
 import androidx.annotation.StringRes
 
-interface ResourceProvider {
-    fun getString(@StringRes id: Int): String
-
-    class Base(private val context: Context) : ResourceProvider {
-        override fun getString(id: Int): String = context.getString(id)
-    }
+class ResourceProvider(private val context: Context) {
+     fun getString(id: Int): String = context.getString(id)
 }

@@ -5,18 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.shusharin.songbase.core.Abstract
 
-interface SongListCommunication : Abstract.Mapper {
-    fun map(songs: List<SongUi>)
-    fun observe(owner: LifecycleOwner, observer: Observer<List<SongUi>>)
+class SongListCommunication : Abstract.Mapper {
+    private val listLiveData = MutableLiveData<List<SongUi>>()
+    fun map(songs: List<SongUi>) {
+        listLiveData.value = songs
+    }
 
-    class Base : SongListCommunication {
-        private val listLiveData = MutableLiveData<List<SongUi>>()
-        override fun map(songs: List<SongUi>) {
-            listLiveData.value = songs
-        }
-
-        override fun observe(owner: LifecycleOwner, observer: Observer<List<SongUi>>) {
-            listLiveData.observe(owner, observer)
-        }
+    fun observe(owner: LifecycleOwner, observer: Observer<List<SongUi>>) {
+        listLiveData.observe(owner, observer)
     }
 }

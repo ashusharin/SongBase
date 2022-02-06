@@ -3,10 +3,7 @@ package com.shusharin.songbase.data.cache.external
 import android.content.ContentResolver
 import android.content.Context
 
-interface ResolverWrapper {
-    fun provideContentResolver(): ContentResolver
+class ResolverWrapper(private val context: Context) {
+    fun provideContentResolver(): ContentResolver = context.contentResolver
 
-    class Base(private val context: Context) : ResolverWrapper {
-        override fun provideContentResolver(): ContentResolver = context.contentResolver
-        }
-    }
+}

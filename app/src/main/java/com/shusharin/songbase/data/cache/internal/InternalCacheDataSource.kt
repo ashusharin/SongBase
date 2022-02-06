@@ -3,47 +3,31 @@ package com.shusharin.songbase.data.cache.internal
 import com.shusharin.songbase.data.update.Mapper
 import com.shusharin.songbase.domain.Song
 
-interface InternalCacheDataSource {
+class InternalCacheDataSource(
+    private val database: SongDatabase,
+    private val mapper: Mapper,
+) {
 
-    suspend fun fetchListSong(): List<SongDb>
+    suspend fun fetchListSong(): List<SongDb> {
+        return database.getSongFromDB()
 
-    suspend fun saveListSong(songs: List<Song>)
+    }
 
-    suspend fun deleteSong(song: Song)
+    suspend fun saveListSong(songs: List<Song>) {
+        database.insertSongInDB(songs.map {
+            mapper.mapEntityToDbModel(it)
+        })
+    }
 
-    suspend fun updateSong(song: Song)
+    suspend fun deleteSong(song: Song) {
+        database.deleteSongInDB(mapper.mapEntityToDbModel(song))
+    }
 
-    suspend fun deleteAll()
+    suspend fun updateSong(song: Song) {
+        database.updateSong(mapper.mapEntityToDbModel(song))
+    }
 
-    class Base(
-        private val database: SongDatabase,
-        private val mapper: Mapper,
-    ) :
-        InternalCacheDataSource {
-
-        override suspend fun fetchListSong(): List<SongDb> {
-            return database.getSongFromDB()
-
-        }
-
-        override suspend fun saveListSong(songs: List<Song>) {
-            database.insertSongInDB(songs.map {
-                mapper.mapEntityToDbModel(it)
-            })
-        }
-
-        override suspend fun deleteSong(song: Song) {
-            database.deleteSongInDB(mapper.mapEntityToDbModel(song))
-        }
-
-        override suspend fun updateSong(song: Song) {
-            database.updateSong(mapper.mapEntityToDbModel(song))
-        }
-
-        override suspend fun deleteAll() {
-            database.deleteAll()
-        }
-
-
+    suspend fun deleteAll() {
+        database.deleteAll()
     }
 }
