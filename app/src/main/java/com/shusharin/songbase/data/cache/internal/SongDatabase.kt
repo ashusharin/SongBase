@@ -17,4 +17,8 @@ class SongDatabase(private val songDAO: DAO) {
     suspend fun updateSong(song: SongDb){
         songDAO.updateSong(song)
     }
+
+    suspend fun deleteAll(){
+        songDAO.deleteAllSong()
+    }
 }

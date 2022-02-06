@@ -16,4 +16,7 @@ interface DAO {
 
     @Update
     suspend fun updateSong(song: SongDb)
+
+    @Query("DELETE FROM SongDb")
+    fun deleteAllSong()
 }

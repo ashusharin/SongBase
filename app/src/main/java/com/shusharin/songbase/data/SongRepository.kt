@@ -23,30 +23,32 @@ interface SongRepository {
             } else {
                 val songsExternal = externalCacheDataSource.find()
                 var songsInternal = cacheMapper.map(songsDb)
-
-                if (songsExternal.isEmpty()) {
-                    songsInternal.forEach {
-                        internalCacheDataSource.deleteSong(it)
-                    }
-                } else {
-                    songsInternal.forEach { songInternal ->
-                        if (!songsExternal.any { songInternal == it }) {
-                            songsExternal.forEach { songExternal ->
-                                if (songInternal.isSame(songExternal)) {
-                                    internalCacheDataSource.updateSong(songExternal)
-                                } else {
-                                    internalCacheDataSource.deleteSong(songInternal)
-                                }
-                            }
-                        }
-                    }
-                }
+                updateSongs(songsExternal, songsInternal)
                 internalCacheDataSource.saveListSong(songsExternal)
                 songsInternal = cacheMapper.map(internalCacheDataSource.fetchListSong())
                 SongDataList.Success(songsInternal)
             }
         } catch (e: Exception) {
             SongDataList.Fail(e)
+        }
+
+        private suspend fun updateSongs(
+            songsExternal: List<SongData>,
+            songsInternal: List<SongData>,
+        ) {
+            if (songsExternal.isEmpty()) {
+                internalCacheDataSource.deleteAll()
+            } else {
+                songsInternal.forEach { songInternal ->
+                    if (!songsExternal.any { songInternal == it }) {
+                        songsExternal.forEach { songExternal ->
+                            if (songInternal.isSame(songExternal)) internalCacheDataSource.updateSong(
+                                songExternal) else
+                                internalCacheDataSource.deleteSong(songInternal)
+                        }
+                    }
+                }
+            }
         }
     }
 }
