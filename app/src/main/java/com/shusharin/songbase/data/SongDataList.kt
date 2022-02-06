@@ -1,19 +1,18 @@
 package com.shusharin.songbase.data
 
-import com.shusharin.songbase.core.Abstract
 import com.shusharin.songbase.domain.SongDomainList
-import java.lang.Exception
+import com.shusharin.songbase.domain.Song
+import com.shusharin.songbase.ui.ResourceProvider
 
-sealed class SongDataList : Abstract.Object<SongDomainList, SongDataListToDomainMapper> {
+sealed class SongDataList {
+    abstract fun map(): SongDomainList
 
-
-    data class Success(private val listSong : List<SongData>) : SongDataList() {
-        override fun map(mapper: SongDataListToDomainMapper): SongDomainList =mapper.map(listSong)
+    data class Success(private val listSong: List<Song>) : SongDataList() {
+        override fun map(): SongDomainList = SongDomainList.Success(listSong)
     }
 
-    data class Fail(private val e : Exception) : SongDataList() {
-    override fun map(mapper: SongDataListToDomainMapper): SongDomainList {
-        return mapper.map(e)
-    }
+    data class Fail(private val e: Exception, private val resourceProvider: ResourceProvider) :
+        SongDataList() {
+        override fun map(): SongDomainList = SongDomainList.Fail(e,resourceProvider)
     }
 }

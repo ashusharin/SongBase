@@ -2,21 +2,19 @@ package com.shusharin.songbase.data.cache.external
 
 import android.content.ContentUris
 import android.database.Cursor
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import com.shusharin.songbase.data.SongData
-import java.nio.channels.SelectableChannel
+import com.shusharin.songbase.domain.Song
 import kotlin.math.abs
 
 interface ExternalCacheDataSource {
-    fun find(): List<SongData>
+    fun find(): List<Song>
 
     class Base(private val resolver: ResolverWrapper, private val cursorManager: CursorManager) :
         ExternalCacheDataSource {
-        override fun find(): List<SongData> {
-            val musicList = mutableListOf<SongData>()
+        override fun find(): List<Song> {
+            val musicList = mutableListOf<Song>()
             val collection = cursorManager.provideCollection()
             val projection = cursorManager.provideProjection()
             val query = resolver.provideContentResolver().query(
@@ -59,7 +57,7 @@ interface ExternalCacheDataSource {
 
                     if (mimeType.toString() in types && duration > TEN_SECOND) {
                         if (isMusic(local_path)) {
-                            musicList.add(SongData(_id = _id,
+                            musicList.add(Song(_id = _id,
                                 track_id = trackId,
                                 title = title,
                                 artist = artist,

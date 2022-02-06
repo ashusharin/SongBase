@@ -3,20 +3,18 @@ package com.shusharin.songbase.ui
 import com.shusharin.songbase.R
 import com.shusharin.songbase.core.Abstract
 import com.shusharin.songbase.data.ErrorType
-import com.shusharin.songbase.domain.SongDomain
-import com.shusharin.songbase.domain.SongDomainToUiMapper
+import com.shusharin.songbase.domain.Song
 
 sealed class SongUiList : Abstract.Object<Unit, SongListCommunication> {
 
     class Success(
-        private val songs: List<SongDomain>,
-        private val songMapper: SongDomainToUiMapper,
+        private val songs: List<Song>,
     ) : SongUiList() {
         override fun map(mapper: SongListCommunication) {
-            val songUi = songs.map {
-                it.map(songMapper)
+            val listUi = songs.map {
+                SongUi.Base(it.title, it.artist)
             }
-            mapper.map(songUi)
+            mapper.map(listUi)
         }
     }
 
